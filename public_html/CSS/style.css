@@ -3,3 +3,10 @@
     Author     : Kosio
 */
 
+body {
+    margin: 0;
+}
+
+#screen-view {
+    display: block;
+}
