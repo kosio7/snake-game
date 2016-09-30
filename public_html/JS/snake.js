@@ -1,15 +1,28 @@
+/*
+ * ######################Vars Declaration#############################
+ */
+
 let snake;
 let snakeLength;
 let snakeSize;
+let snakeDirection;
 let food;
 let context;
 let screenWidth;
 let screenHeight;
 
+/*
+ * #####################Executing Functions###########################
+ */
+
 gameInit();
 snakeInit();
 foodInit();
-setInterval(gameLoop, 150);
+setInterval(gameLoop, 100);
+
+/*
+ * #####################Game Functions################################
+ */
 
 function gameInit() {
     let canvas = document.getElementById("screen-view");
@@ -19,6 +32,8 @@ function gameInit() {
     screenHeight = window.innerHeight;
     canvas.width = screenWidth;
     canvas.height = screenHeight;
+    
+    document.addEventListener("keydown", keyHandler);
 }
 
 function gameLoop() {
@@ -33,10 +48,15 @@ function gameDraw() {
     context.fillRect(0, 0, screenWidth, screenHeight);   
 }
 
+/*
+ * #####################Snake Functions###############################
+ */
+
 function snakeInit() {
     snake = [];
     snakeLength = 5;
     snakeSize = 15;
+    snakeDirection = "down";
     
     for (let i = snakeLength - 1; i >= 0; i--) {
         snake.push({
@@ -56,7 +76,16 @@ function snakeDraw() {
 function snakeMove() {
     let snakeHeadX = snake[0].x;
     let snakeHeadY = snake[0].y; 
-    snakeHeadX++;
+    
+    if (snakeDirection == "down") {
+        snakeHeadY++;
+    } else if (snakeDirection == "right") {
+        snakeHeadX++;
+    } else if (snakeDirection == "up") {
+        snakeHeadY--;
+    } else if (snakeDirection == "left") {
+        snakeHeadX--;
+    }
     
     let snakeTail = snake.pop();
     snakeTail.x = snakeHeadX;
@@ -64,14 +93,44 @@ function snakeMove() {
     snake.unshift(snakeTail);
 }
 
+/*
+ * ######################Food Functions###############################
+ */
+
 function foodInit() {
     food = {
         x: 0,
         y: 0
     };
+    setFoodPos();
 }
 
 function foodDraw() {
     context.fillStyle = "white";
-    context.fillRect(food.x, food.y, snakeSize, snakeSize);
+    context.fillRect(food.x * snakeSize, food.y * snakeSize, snakeSize, snakeSize);
+}
+
+function setFoodPos() {
+    let randXPos = Math.floor(Math.random() * screenWidth);
+    let randYPos = Math.floor(Math.random() * screenHeight);
+    food.x = Math.floor(randXPos / snakeSize); /* Dividing by the snake size gives our food the correct..*/
+    food.y = Math.floor(randYPos / snakeSize); /* ..positioning in the world.*/
+}
+
+/*
+ * #######################Key Handling Functions###############################
+ */
+
+function keyHandler(event) {
+    console.log(event);
+    
+    if (event.keyCode == "68" && snakeDirection != "left") {
+        snakeDirection = "right";
+    } else if (event.keyCode == "87" && snakeDirection != "down") {
+        snakeDirection = "up";
+    } else if (event.keyCode == "65" && snakeDirection != "right") {
+        snakeDirection = "left";
+    } else if (event.keyCode == "83" && snakeDirection != "up") {
+        snakeDirection = "down";
+    }
 }
