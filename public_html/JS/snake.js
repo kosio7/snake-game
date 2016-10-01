@@ -5,6 +5,8 @@
 let snake;
 let snakeLength;
 let snakeSize;
+let snakeHeadX;
+let snakeHeadY;
 let snakeDirection;
 let food;
 let context;
@@ -54,7 +56,7 @@ function gameDraw() {
 
 function snakeInit() {
     snake = [];
-    snakeLength = 5;
+    snakeLength = 1;
     snakeSize = 15;
     snakeDirection = "down";
     
@@ -74,8 +76,8 @@ function snakeDraw() {
 }
 
 function snakeMove() {
-    let snakeHeadX = snake[0].x;
-    let snakeHeadY = snake[0].y; 
+    snakeHeadX = snake[0].x;
+    snakeHeadY = snake[0].y; 
     
     if (snakeDirection == "down") {
         snakeHeadY++;
@@ -86,6 +88,9 @@ function snakeMove() {
     } else if (snakeDirection == "left") {
         snakeHeadX--;
     }
+    
+    foodCollision();
+    wallCollision();
     
     let snakeTail = snake.pop();
     snakeTail.x = snakeHeadX;
@@ -132,5 +137,26 @@ function keyHandler(event) {
         snakeDirection = "left";
     } else if (event.keyCode == "83" && snakeDirection != "up") {
         snakeDirection = "down";
+    }
+}
+
+/*
+ * #######################Collision Handling###################################
+ */
+
+function foodCollision() {
+    if (snakeHeadX == food.x && snakeHeadY == food.y) {
+        snake.push({
+            x: 0,
+            y: 0
+        });
+        snakeLength++;
+        setFoodPos();
+    }
+}
+
+function wallCollision() {
+    if (snakeHeadX * snakeSize >= screenWidth || snakeHeadX * snakeSize < 0) {
+        console.log("COLLISION");
     }
 }
